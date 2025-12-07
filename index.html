@@ -1,1 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>For You, Sannidhi | The Infinite Story</title>
+    
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Quicksand:wght@300;400;500;600&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            /* --- CORE IDENTITY --- */
+            --her-name: "Sannidhi";
+            
+            /* --- THEME: DEFAULT (Soulmate Dawn) --- */
+            --bg-gradient: linear-gradient(180deg, #FFF8F4 0%, #FFFDFB 100%);
+            --text-main: #5A5255;
+            --accent-glow: #F2C1D1; /* Lotus Pink */
+            --particle-color: #F4D8D6;
+            --ink-color: #4A4A4A;
+            
+            /* --- VERSION 11: MODERN GLASS SYSTEM --- */
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-blur: blur(20px);
+            --glass-shadow: 0 8px 32px 0 rgba(100, 100, 111, 0.1);
+            
+            /* --- PHYSICS & ANIMATION --- */
+            --perspective: 1500px;
+            --ease-fluid: cubic-bezier(0.25, 1, 0.5, 1);
+            --heartbeat-rate: 1.8s;
+        }
+
+        /* --- THEME ENGINES --- */
+        [data-theme="moonlit"] {
+            --bg-gradient: linear-gradient(to bottom, #0f172a, #1e293b);
+            --text-main: #e2e8f0;
+            --accent-glow: #94a3b8;
+            --particle-color: #ffffff;
+            --ink-color: #f1f5f9;
+            --glass-bg: rgba(30, 41, 59, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="eternal-garden"] {
+            --bg-gradient: linear-gradient(to bottom, #f0fdf4, #dcfce7);
+            --text-main: #14532d;
+            --accent-glow: #4ade80;
+            --particle-color: #bbf7d0;
+            --ink-color: #166534;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+
+        [data-theme="cherry-blossom"] {
+            --bg-gradient: linear-gradient(to bottom, #fff1f2, #ffe4e6);
+            --text-main: #881337;
+            --accent-glow: #fb7185;
+            --particle-color: #fecdd3;
+            --ink-color: #9f1239;
+            --glass-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        /* --- GLOBAL RESET --- */
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            background: var(--bg-gradient); background-size: 400% 400%;
+            font-family: 'Quicksand', sans-serif; color: var(--text-main);
+            min-height: 100vh; overflow-x: hidden; 
+            transition: background 1.5s var(--ease-fluid);
+            animation: deepBreath 20s ease-in-out infinite;
+        }
+
+        /* --- LANDING EXPERIENCE --- */
+        #landing-container {
+            position: fixed; inset: 0; z-index: 5000;
+            background: linear-gradient(135deg, #FFF0F5 0%, #E6E6FA 100%);
+            display: flex; justify-content: center; align-items: center;
+            overflow: hidden;
+        }
+        
+        .landing-screen {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: all 1.2s var(--ease-fluid);
+            padding: 30px; text-align: center;
+        }
+        .landing-screen.active { opacity: 1; pointer-events: auto; }
+        
+        .cinematic-text {
+            font-family: 'Cormorant Garamond'; font-size: 2.5rem; color: #5A5255;
+            margin-bottom: 2rem; position: relative;
+        }
+        .cinematic-text span { opacity: 0; animation: inkFlow 1s forwards; display: inline-block; }
+        
+        .cinematic-btn {
+            padding: 15px 40px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.6);
+            background: rgba(255,255,255,0.4); backdrop-filter: blur(10px);
+            font-family: 'Quicksand'; letter-spacing: 2px; text-transform: uppercase;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.5s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); animation: subtleFloat 4s infinite;
+        }
+        .cinematic-btn:hover { background: white; transform: scale(1.05); box-shadow: 0 15px 40px rgba(242, 193, 209, 0.4); }
+
+        /* --- APP CONTAINER --- */
+        #app {
+            max-width: 1000px; margin: 0 auto; min-height: 100vh;
+            display: flex; flex-direction: column; padding: 20px;
+            opacity: 0; transform: scale(0.95); filter: blur(10px);
+            transition: all 1.5s var(--ease-fluid); position: relative; z-index: 10;
+        }
+        #app.app-visible { opacity: 1; transform: scale(1); filter: blur(0); }
+
+        /* --- GLASS UI HEADER --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; z-index: 50;
+        }
+        .brand { font-family: 'Cormorant Garamond'; font-size: 1.8rem; font-weight: 600; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        /* --- HOME VIEW --- */
+        .greeting { font-family: 'Cormorant Garamond'; font-size: 3rem; line-height: 1.1; margin-bottom: 20px; font-weight: 500; }
+        .quote-bar {
+            font-family: 'Quicksand'; font-size: 1rem; color: var(--text-main);
+            opacity: 0.7; margin-bottom: 50px; padding: 10px 20px;
+            background: var(--glass-bg); border-radius: 30px; display: inline-block;
+            backdrop-filter: blur(5px); border: 1px solid var(--glass-border);
+        }
+
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 30px; padding-bottom: 80px;
+        }
+        
+        /* --- V11 CARD SYSTEM --- */
+        .card-wrapper { position: relative; perspective: var(--perspective); z-index: 2; }
+        
+        .category-card {
+            background: var(--glass-bg); 
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px; padding: 25px;
+            text-align: center; height: 220px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: var(--glass-shadow);
+            transition: transform 0.1s linear, box-shadow 0.4s var(--ease-fluid);
+            transform-style: preserve-3d; cursor: pointer; position: relative; overflow: hidden;
+            animation: subtlePulse var(--heartbeat-rate) infinite ease-in-out;
+        }
+        
+        .category-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at center, var(--accent-glow), transparent 70%);
+            opacity: 0; transition: opacity 0.5s; z-index: 0; mix-blend-mode: soft-light;
+        }
+        .category-card:hover::after { opacity: 0.4; }
+
+        .lock-icon { position: absolute; top: 20px; right: 20px; font-size: 1rem; opacity: 0.4; z-index: 2; transition: 0.4s; }
+        .category-card:hover .lock-icon { opacity: 1; color: var(--accent-glow); transform: rotate(15deg); }
+        
+        .card-icon { font-size: 3.5rem; margin-bottom: 20px; display: block; transition: transform 0.6s var(--ease-fluid); z-index: 2; position: relative; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .category-card:hover .card-icon { transform: scale(1.1) translateY(-8px); }
+        .card-label { font-weight: 600; letter-spacing: 2px; font-size: 0.85rem; z-index: 2; position: relative; text-transform: uppercase; opacity: 0.8; }
+
+        /* --- READER VIEW & SIGNATURE --- */
+        .reader-container { max-width: 720px; margin: 0 auto; min-height: 85vh; display: flex; flex-direction: column; }
+        
+        .message-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            padding: 60px 45px; border-radius: 12px;
+            box-shadow: 0 40px 100px -20px rgba(50, 50, 93, 0.15);
+            margin-top: 20px; opacity: 0; transform-origin: center 80%;
+            border-bottom-right-radius: 80px;
+            transition: all 0.8s var(--ease-fluid); position: relative;
+        }
+        .message-card.open { animation: fluidReveal 1.2s var(--ease-fluid) forwards; }
+        
+        .ai-content { font-size: 1.4rem; line-height: 2.1; color: var(--ink-color); font-family: 'Cormorant Garamond'; font-weight: 500; }
+        .echo-word { display: inline-block; opacity: 0; animation: textFadeIn 0.8s forwards; margin-right: 0.25em; }
+        
+        /* PATCH 2: Updated Signature Styling */
+        .signature { 
+            margin-top: 50px; 
+            text-align: right; 
+            font-family: 'Dancing Script'; 
+            font-size: 1.6rem; 
+            color: var(--accent-glow); 
+            opacity: 0; /* Hidden initially */
+            transform: translateY(10px);
+        }
+        .signature.visible {
+            animation: inkFlow 2s forwards;
+            opacity: 1; /* Fallback */
+        }
+
+        /* Action Bar */
+        .action-bar { display: flex; gap: 15px; margin-top: 40px; justify-content: flex-end; opacity: 0; animation: fadeIn 1s 2.5s forwards; }
+        .action-pill {
+            padding: 10px 24px; border-radius: 30px; font-size: 0.9rem;
+            background: rgba(255,255,255,0.5); color: var(--text-main); border: 1px solid white;
+            cursor: pointer; display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        .action-pill:hover { background: var(--accent-glow); color: white; transform: translateY(-2px); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes inkFlow { from { opacity: 0; transform: translateY(10px) skewY(5deg); } to { opacity: 1; transform: translateY(0) skewY(0); } }
+        @keyframes subtlePulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+        @keyframes fluidReveal { 0% { opacity: 0; transform: translateY(80px) scale(0.9); filter: blur(10px); } 100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
+        @keyframes textFadeIn { from { opacity: 0; transform: translateY(5px); filter: blur(2px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes subtleFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes rippleOut { 0% { width: 0; height: 0; opacity: 0.6; } 100% { width: 400px; height: 400px; opacity: 0; } }
+        @keyframes deepBreath { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* Touch Echo */
+        .touch-echo {
+            position: fixed; border-radius: 50%; background: var(--accent-glow);
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
+            filter: blur(10px); animation: rippleOut 0.6s linear forwards;
+        }
+
+        /* Footer */
+        .footer { text-align: center; margin-top: auto; padding: 40px; font-size: 0.8rem; opacity: 0.6; z-index: 50; }
+        .love-meter { color: #ccc; transition: color 0.5s; display: inline-block; margin-left: 5px; }
+        .love-meter.full { color: #ff4757; animation: subtlePulse 1.2s infinite; }
+
+        /* Particles */
+        #particles { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+
+        /* Utilities */
+        .view { display: none; }
+        .view.active { display: block; animation: fluidReveal 1s var(--ease-fluid); }
+
+    </style>
+</head>
+<body data-theme="soulmate-dawn">
+
+    <!-- LANDING EXPERIENCE -->
+    <div id="landing-container">
+        <!-- Screen 1 -->
+        <div class="landing-screen active" id="ls-1">
+            <h1 class="cinematic-text" id="landing-text-1">Made for you, Sannidhi.</h1>
+            <button class="cinematic-btn" onclick="LandingSequence.next()">Step Inside</button>
+        </div>
+        <!-- Screen 2 -->
+        <div class="landing-screen" id="ls-2">
+            <h1 class="cinematic-text">We’ve built a space for your heart.</h1>
+            <div style="font-size:0.9rem; opacity:0.6; margin-top:20px;">(Swipe or tap to continue)</div>
+        </div>
+        <!-- Screen 3 -->
+        <div class="landing-screen" id="ls-3">
+            <h1 class="cinematic-text" style="font-size:3rem;">Come home.</h1>
+            <button class="cinematic-btn" onclick="LandingSequence.finish()">Enter</button>
+        </div>
+    </div>
+
+    <!-- BACKGROUND LAYERS -->
+    <div class="bg-lotus" style="position: fixed; top: 50%; left: 50%; width: 80vw; height: 80vw; background: radial-gradient(circle, var(--accent-glow), transparent 70%); opacity: 0.08; transform: translate(-50%,-50%); filter: blur(50px); animation: subtlePulse 10s infinite; z-index:-1;"></div>
+    <div id="particles"></div>
+
+    <!-- MAIN APP -->
+    <div id="app">
+        <header>
+            <div class="brand">For You, Sannidhi</div>
+            <!-- PATCH 1: Constellation Button Removed -->
+            <div class="controls-row" style="display:flex; gap:10px;">
+                <!-- Clean Header -->
+            </div>
+        </header>
+
+        <!-- HOME VIEW -->
+        <div id="home-view" class="view active">
+            <h1 class="greeting" id="time-greeting">
+                Good Morning,<br><span style="color:var(--accent-glow);">Sannidhi</span>
+            </h1>
+            <div class="quote-bar" id="quote-bar">You matter to me, Sannidhi.</div>
+            
+            <div class="grid-container" id="category-grid">
+                <!-- Categories Injected Here -->
+            </div>
+        </div>
+
+        <!-- READER VIEW -->
+        <div id="reader-view" class="view">
+            <div class="reader-container">
+                <button class="icon-btn" style="align-self: flex-start; margin-bottom: 10px;" onclick="goHome()">← Back</button>
+                
+                <div class="message-card" id="message-card">
+                    <div id="ai-output" class="ai-content"></div>
+                    <!-- PATCH 2: Signature Updated -->
+                    <div class="signature" id="msg-signature">— From Shreyas Hegde</div>
+                    
+                    <div class="action-bar">
+                        <button class="action-pill" onclick="Tracker.saveFavorite()">❤️ Save to Heart</button>
+                    </div>
+
+                    <div class="whisper-thread" id="whisper-thread" onclick="WhisperThreads.next()" style="margin-top:40px; text-align:center; font-style:italic; opacity:0.6; cursor:pointer;">
+                        Would you like to see another moment that feels like this?
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Made with love, by Shreyas <span class="love-meter" id="love-meter">♥</span>
+        </div>
+    </div>
+
+    <!-- AUDIO -->
+    <audio id="ambient-sound" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_076045507f.mp3?filename=soft-piano-100-bpm-121529.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        /* =========================================
+           1. DATA: CONTENT LIBRARY
+           ========================================= */
+        const RAW_DATA = {
+          "personalization": {
+            "name": "Sannidhi", "nicknames": ["Subbamma", "Bangaaru"], "favorite_flower": "Lotus", "love_language": "Words of Affirmation"
+          },
+          "categories": [
+            {
+              "category": "Warmth", "id": "warmth", "icon": "🧣", "mood": "cat-warmth",
+              "cards": [
+                { "card_title": "A Quiet Moment for You", "variations": [
+                    "Take this moment as permission to breathe and be gentle with yourself. If the night feels long, imagine my hand, warm and steady in yours. Let these words be a soft blanket around your heart. I am holding a quiet space for you and thinking of your comfort. I am always thinking of you, Sannidhi, and how deeply you matter to me. Your presence feels like a lotus unfolding at dawn."
+                ]},
+                { "card_title": "When the World Feels Heavy", "variations": [
+                    "I am holding a quiet space for you and thinking of your comfort. You are allowed to rest, even when the world insists you keep moving. Take this moment as permission to breathe and be gentle with yourself. Let these words be a soft blanket around your heart. I am always thinking of you, Subbamma, and how deeply you matter to me."
+                ]}
+              ]
+            },
+            {
+               "category": "Smiles", "id": "smiles", "icon": "✨", "mood": "cat-smiles",
+               "cards": [
+                 { "card_title": "A Tiny Spark of Joy", "variations": [
+                    "You are the kind of person who makes sunshine linger a bit longer. Here’s a playful nudge to lift your spirit and make you grin. The world gets kinder when your smile graces it. This is a little note to make your face bloom into that smile I adore. I am always thinking of you, Bangaaru, and how deeply you matter to me."
+                 ]}
+               ]
+            },
+            {
+               "category": "Longing", "id": "longing", "icon": "🌙", "mood": "cat-longing",
+               "cards": [
+                 { "card_title": "When the Distance Feels Too Big", "variations": [
+                    "Every message is a gentle bridge bringing us closer, Subbamma. I tuck memories into pockets so they will travel with you. I keep you close in small rituals and quiet remembrances. Imagine my voice whispering your name, Bangaaru, as if I were there. I am always thinking of you, Bangaaru, and how deeply you matter to me."
+                 ]}
+               ]
+            },
+            {
+               "category": "Proud of You", "id": "proud", "icon": "🌿", "mood": "cat-warmth",
+               "cards": [
+                 { "card_title": "Look How Far You've Come", "variations": [
+                    "I am endlessly proud of your courage, even in tiny acts. I believe in your gifts and the soft strength you carry, Sannidhi. I notice the small brave choices you make each day. Your quiet persistence is a kind of brilliance that inspires me. Please let these words remind you of how capable you truly are. I am always thinking of you, Subbamma, and how deeply you matter to me."
+                 ]}
+               ]
+            },
+            {
+               "category": "Tough Days", "id": "tough", "icon": "🌧", "mood": "cat-warmth",
+               "cards": [
+                 { "card_title": "For the Hard Moments", "variations": [
+                    "I am here for the parts you cannot share with anyone else. You deserve compassion, especially from the person who loves you most. Breathe with me — slow in, slow out — and feel the weight ease. Allow yourself the grace of small mercies in hard hours. I am always thinking of you, Sannidhi, and how deeply you matter to me."
+                 ]}
+               ]
+            },
+            {
+               "category": "Us", "id": "us", "icon": "💞", "mood": "cat-love",
+               "cards": [
+                 { "card_title": "Where Our Story Lives", "variations": [
+                    "Every chapter with you feels like coming home, Subbamma. We have more pages to write and I love imagining them with you. I am grateful for the way our lives weave together gently. We have built a language of tenderness that always surprises me. Our story is a quiet constellation of small, luminous things. I am always thinking of you, Subbamma, and how deeply you matter to me."
+                 ]}
+               ]
+            },
+            {
+               "category": "Always Love", "id": "love", "icon": "💌", "mood": "cat-love",
+               "cards": [
+                 { "card_title": "A Hug Waiting for You", "variations": [
+                    "I love you simply and completely, in ways both quiet and fierce. There is an ease with you that feels like a safe harbor for my heart. My care for you is steady and unconditional, Bangaaru. Open this card whenever you need a gentle reminder: you are loved. I am always thinking of you, Bangaaru, and how deeply you matter to me."
+                 ]}
+               ]
+            }
+          ]
+        };
+
+        /* =========================================
+           2. V11 LANDING SEQUENCE
+           ========================================= */
+        const LandingSequence = {
+            init() {
+                const h1 = document.getElementById('landing-text-1');
+                const text = h1.innerText;
+                h1.innerHTML = text.split('').map((char, i) => 
+                    `<span style="animation-delay:${i*0.05}s">${char}</span>`
+                ).join('');
+                
+                document.getElementById('ls-2').addEventListener('click', () => {
+                    document.getElementById('ls-2').style.opacity = '0';
+                    document.getElementById('ls-2').style.pointerEvents = 'none';
+                    document.getElementById('ls-3').classList.add('active');
+                });
+            },
+            
+            next() {
+                document.getElementById('ls-1').classList.remove('active');
+                document.getElementById('ls-2').classList.add('active');
+            },
+            
+            finish() {
+                document.getElementById('landing-container').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('landing-container').style.display = 'none';
+                    document.getElementById('app').classList.add('app-visible');
+                    document.getElementById('ambient-sound').play().catch(()=>{});
+                }, 1200);
+            }
+        };
+
+        /* =========================================
+           3. CORE ENGINE
+           (Constellation logic removed)
+           ========================================= */
+        const Tracker = {
+            data: JSON.parse(localStorage.getItem('sannidhi_v11_state') || '{"reads":0, "catCounts":{}, "lastVisit": 0, "savedMessages": 0}'),
+            
+            save() { localStorage.setItem('sannidhi_v11_state', JSON.stringify(this.data)); },
+            
+            init() {
+                const now = Date.now();
+                this.data.lastVisit = now;
+                this.save();
+                this.determineSeason();
+            },
+            
+            trackRead(catId) {
+                this.data.reads++;
+                this.data.catCounts[catId] = (this.data.catCounts[catId] || 0) + 1;
+                this.save();
+                this.determineSeason();
+                if(this.data.reads > 30) document.getElementById('love-meter').classList.add('full');
+            },
+            
+            saveFavorite() {
+                this.data.savedMessages++;
+                this.save();
+                const btn = document.querySelector('.action-pill');
+                btn.innerHTML = "❤️ Saved to Heart";
+                btn.style.background = "var(--accent-glow)";
+                btn.style.color = "white";
+                createTouchEcho(window.innerWidth/2, window.innerHeight/2);
+            },
+
+            determineSeason() {
+                const counts = this.data.catCounts;
+                if(this.data.reads < 5) return; 
+
+                const scores = {
+                    'comfort': (counts['warmth']||0) + (counts['tough']||0),
+                    'joy': (counts['smiles']||0),
+                    'longing': (counts['longing']||0),
+                    'love': (counts['us']||0) + (counts['love']||0)
+                };
+                
+                const topMood = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+                
+                const themeMap = {
+                    'comfort': 'eternal-garden',
+                    'joy': 'cherry-blossom',
+                    'longing': 'moonlit',
+                    'love': 'soulmate-dawn'
+                };
+                document.body.setAttribute('data-theme', themeMap[topMood] || 'soulmate-dawn');
+            }
+        };
+
+        function initApp() {
+            LandingSequence.init();
+            Tracker.init();
+            renderCategories();
+            startQuoteCycle();
+            updateTimeGreeting();
+            
+            document.addEventListener('click', (e) => createTouchEcho(e.clientX, e.clientY));
+            
+            document.addEventListener('mousemove', (e) => {
+                const x = (e.clientX / window.innerWidth - 0.5) * 20;
+                const y = (e.clientY / window.innerHeight - 0.5) * 20;
+                document.body.style.backgroundPosition = `calc(50% + ${x}px) calc(50% + ${y}px)`;
+            });
+        }
+
+        /* --- TIME GREETING --- */
+        function updateTimeGreeting() {
+            const hour = new Date().getHours();
+            let greeting = "";
+            let glowColor = "";
+
+            if (hour >= 6 && hour < 12) {
+                greeting = "Good morning, Sannidhi.<br><span style='font-size:1.4rem; opacity:0.8; font-weight:400;'>I hope today feels gentle for you.</span>";
+                glowColor = "#FFD700"; 
+            } else if (hour >= 12 && hour < 18) {
+                greeting = "Good afternoon, Bangaaru.<br><span style='font-size:1.4rem; opacity:0.8; font-weight:400;'>I’m right here with you.</span>";
+                glowColor = "#FF8C00";
+            } else if (hour >= 18 && hour < 21) {
+                greeting = "Good evening, Subbamma.<br><span style='font-size:1.4rem; opacity:0.8; font-weight:400;'>You can rest your heart here.</span>";
+                glowColor = "#D48BA0"; 
+            } else {
+                greeting = "It’s a quiet hour…<br><span style='font-size:1.4rem; opacity:0.8; font-weight:400;'>I’m holding you close, love.</span>";
+                glowColor = "#191970"; 
+            }
+
+            const greetEl = document.getElementById('time-greeting');
+            greetEl.innerHTML = greeting;
+            if(!document.body.hasAttribute('data-theme')) {
+                document.documentElement.style.setProperty('--accent-glow', glowColor);
+            }
+        }
+
+        /* --- RENDERING --- */
+        function renderCategories() {
+            const grid = document.getElementById('category-grid');
+            grid.innerHTML = '';
+            
+            RAW_DATA.categories.forEach(cat => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+                wrapper.innerHTML = `
+                    <div class="category-card ${cat.mood}" onclick="openCategory('${cat.id}')">
+                         <div class="lock-icon">♥</div>
+                         <div class="card-content">
+                            <span class="card-icon">${cat.icon}</span>
+                            <span class="card-label">${cat.category}</span>
+                         </div>
+                    </div>
+                `;
+                wrapper.onmousemove = (e) => {
+                    const card = wrapper.querySelector('.category-card');
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left - rect.width/2;
+                    const y = e.clientY - rect.top - rect.height/2;
+                    card.style.transform = `perspective(1000px) rotateY(${x/10}deg) rotateX(${-y/10}deg) scale(1.02)`;
+                };
+                wrapper.onmouseleave = () => wrapper.querySelector('.category-card').style.transform = 'perspective(1000px) rotateY(0) rotateX(0)';
+                grid.appendChild(wrapper);
+            });
+        }
+
+        function openCategory(id) {
+            Tracker.trackRead(id);
+            const cat = RAW_DATA.categories.find(c => c.id === id);
+            const card = cat.cards[Math.floor(Math.random() * cat.cards.length)];
+            const coreText = card.variations[0]; 
+            
+            TextEngine.generate(coreText);
+            
+            const reader = document.getElementById('reader-view');
+            reader.className = `view active`;
+            document.getElementById('home-view').className = 'view';
+            
+            const msgCard = document.getElementById('message-card');
+            msgCard.classList.remove('open');
+            void msgCard.offsetWidth;
+            msgCard.classList.add('open');
+            
+            createTouchEcho(window.innerWidth/2, window.innerHeight/2);
+        }
+
+        /* --- TEXT ENGINE (Signature Patch Implemented) --- */
+        const TextEngine = {
+            generate(coreText) {
+                const nicknames = RAW_DATA.personalization.nicknames;
+                const nickname = nicknames[Math.floor(Math.random() * nicknames.length)];
+                
+                const fullText = `My dearest ${nickname}, ${coreText} You are everything to me.`;
+                const output = document.getElementById('ai-output');
+                output.innerHTML = "";
+                
+                const words = fullText.split(' ');
+                let i = 0;
+                
+                // Reset UI
+                const btn = document.querySelector('.action-pill');
+                btn.innerHTML = "❤️ Save to Heart";
+                btn.style.background = "";
+                btn.style.color = "";
+
+                // Reset Signature
+                const sig = document.getElementById('msg-signature');
+                sig.classList.remove('visible');
+
+                function type() {
+                    if(i < words.length) {
+                        const span = document.createElement('span');
+                        span.className = 'echo-word';
+                        span.innerText = words[i] + ' ';
+                        span.style.animationDelay = `${i * 0.05}s`; 
+                        output.appendChild(span);
+                        i++;
+                        setTimeout(type, 100); 
+                    } else {
+                        // Message done, trigger signature
+                        setTimeout(() => {
+                            sig.classList.add('visible');
+                        }, 500); // 0.5s delay
+                    }
+                }
+                type();
+            }
+        };
+
+        /* --- V11 MICRO-INTERACTIONS --- */
+        function createTouchEcho(x, y) {
+            const echo = document.createElement('div');
+            echo.className = 'touch-echo';
+            echo.style.left = x + 'px';
+            echo.style.top = y + 'px';
+            document.body.appendChild(echo);
+            setTimeout(() => echo.remove(), 600);
+        }
+
+        /* --- UTILITIES --- */
+        const WhisperThreads = {
+            next() {
+                openCategory(RAW_DATA.categories[Math.floor(Math.random()*RAW_DATA.categories.length)].id);
+            }
+        };
+
+        function goHome() { 
+            document.getElementById('reader-view').className = 'view'; 
+            document.getElementById('home-view').className = 'view active'; 
+        }
+        
+        function startQuoteCycle() {
+            const quotes = ["You matter to me, Sannidhi.", "You are my favorite thought.", "My world is softer because of you."];
+            let qIdx = 0;
+            const bar = document.getElementById('quote-bar');
+            setInterval(() => {
+                bar.style.opacity = 0;
+                setTimeout(() => {
+                    qIdx = (qIdx + 1) % quotes.length;
+                    bar.innerText = quotes[qIdx];
+                    bar.style.opacity = 0.7;
+                }, 800);
+            }, 7000);
+        }
+
+        // Particle System
+        const pContainer = document.getElementById('particles');
+        setInterval(() => {
+            if(document.hidden) return;
+            const p = document.createElement('div');
+            p.style.position = 'absolute'; 
+            p.style.background = getComputedStyle(document.body).getPropertyValue('--particle-color');
+            p.style.width = Math.random()*4 + 2 + 'px';
+            p.style.height = p.style.width;
+            p.style.borderRadius = '50%';
+            p.style.opacity = 0;
+            p.style.left = Math.random()*100 + 'vw';
+            p.style.top = -10 + 'px';
+            p.style.filter = 'blur(1px)';
+            p.style.transition = 'opacity 1s';
+            p.style.animation = `fluidReveal ${Math.random()*8+8}s linear forwards`;
+            
+            pContainer.appendChild(p);
+            setTimeout(() => p.style.opacity = Math.random()*0.6, 100);
+            setTimeout(() => p.remove(), 10000);
+        }, 600);
+
+        // INITIALIZE
+        initApp();
+    </script>
+</body>
+</html>
