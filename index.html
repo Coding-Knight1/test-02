@@ -116,7 +116,7 @@
         }
         #app.app-visible { opacity: 1; transform: scale(1); filter: blur(0); }
 
-        /* --- GLASS UI HEADER --- */
+        /* --- HEADER --- */
         header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 0; z-index: 50;
@@ -133,19 +133,19 @@
         }
 
         .grid-container {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* PATCH: Wider for sentences */
             gap: 30px; padding-bottom: 80px;
         }
         
-        /* --- V11 CARD SYSTEM --- */
+        /* --- V11 CARD SYSTEM (UPDATED 11.2) --- */
         .card-wrapper { position: relative; perspective: var(--perspective); z-index: 2; }
         
         .category-card {
             background: var(--glass-bg); 
             backdrop-filter: var(--glass-blur);
             border: 1px solid var(--glass-border);
-            border-radius: 32px; padding: 25px;
-            text-align: center; height: 220px;
+            border-radius: 32px; padding: 35px 25px; /* More padding */
+            text-align: center; height: auto; min-height: 240px; /* Adaptive height */
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: var(--glass-shadow);
             transition: transform 0.1s linear, box-shadow 0.4s var(--ease-fluid);
@@ -163,11 +163,32 @@
         .lock-icon { position: absolute; top: 20px; right: 20px; font-size: 1rem; opacity: 0.4; z-index: 2; transition: 0.4s; }
         .category-card:hover .lock-icon { opacity: 1; color: var(--accent-glow); transform: rotate(15deg); }
         
-        .card-icon { font-size: 3.5rem; margin-bottom: 20px; display: block; transition: transform 0.6s var(--ease-fluid); z-index: 2; position: relative; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
+        .card-icon { font-size: 3rem; margin-bottom: 15px; display: block; transition: transform 0.6s var(--ease-fluid); z-index: 2; position: relative; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.1)); }
         .category-card:hover .card-icon { transform: scale(1.1) translateY(-8px); }
-        .card-label { font-weight: 600; letter-spacing: 2px; font-size: 0.85rem; z-index: 2; position: relative; text-transform: uppercase; opacity: 0.8; }
+        
+        /* PATCH 1: Updated Label Style */
+        .card-label { 
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600; 
+            font-size: 1.25rem; 
+            line-height: 1.3;
+            z-index: 2; position: relative; 
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
 
-        /* --- READER VIEW & SIGNATURE --- */
+        /* PATCH 2: Handwritten Subtitle */
+        .card-subtitle {
+            font-family: 'Dancing Script', cursive;
+            font-size: 0.95rem;
+            color: var(--accent-glow);
+            opacity: 0.7;
+            z-index: 2; position: relative;
+            transform: rotate(-2deg);
+            animation: textFadeIn 1s ease forwards;
+        }
+
+        /* --- READER VIEW --- */
         .reader-container { max-width: 720px; margin: 0 auto; min-height: 85vh; display: flex; flex-direction: column; }
         
         .message-card {
@@ -185,19 +206,18 @@
         .ai-content { font-size: 1.4rem; line-height: 2.1; color: var(--ink-color); font-family: 'Cormorant Garamond'; font-weight: 500; }
         .echo-word { display: inline-block; opacity: 0; animation: textFadeIn 0.8s forwards; margin-right: 0.25em; }
         
-        /* PATCH 2: Updated Signature Styling */
         .signature { 
             margin-top: 50px; 
             text-align: right; 
             font-family: 'Dancing Script'; 
             font-size: 1.6rem; 
             color: var(--accent-glow); 
-            opacity: 0; /* Hidden initially */
+            opacity: 0; 
             transform: translateY(10px);
         }
         .signature.visible {
             animation: inkFlow 2s forwards;
-            opacity: 1; /* Fallback */
+            opacity: 1; 
         }
 
         /* Action Bar */
@@ -270,9 +290,8 @@
     <div id="app">
         <header>
             <div class="brand">For You, Sannidhi</div>
-            <!-- PATCH 1: Constellation Button Removed -->
             <div class="controls-row" style="display:flex; gap:10px;">
-                <!-- Clean Header -->
+                <!-- Controls removed previously -->
             </div>
         </header>
 
@@ -295,7 +314,6 @@
                 
                 <div class="message-card" id="message-card">
                     <div id="ai-output" class="ai-content"></div>
-                    <!-- PATCH 2: Signature Updated -->
                     <div class="signature" id="msg-signature">— From Shreyas Hegde</div>
                     
                     <div class="action-bar">
@@ -322,6 +340,8 @@
     <script>
         /* =========================================
            1. DATA: CONTENT LIBRARY
+           PATCH 1: Categories Renamed to Emotional Lines
+           PATCH 3: Mapping Preserved
            ========================================= */
         const RAW_DATA = {
           "personalization": {
@@ -329,7 +349,7 @@
           },
           "categories": [
             {
-              "category": "Warmth", "id": "warmth", "icon": "🧣", "mood": "cat-warmth",
+              "category": "Open when your heart needs a softer place to land.", "id": "warmth", "icon": "🧣", "mood": "cat-warmth",
               "cards": [
                 { "card_title": "A Quiet Moment for You", "variations": [
                     "Take this moment as permission to breathe and be gentle with yourself. If the night feels long, imagine my hand, warm and steady in yours. Let these words be a soft blanket around your heart. I am holding a quiet space for you and thinking of your comfort. I am always thinking of you, Sannidhi, and how deeply you matter to me. Your presence feels like a lotus unfolding at dawn."
@@ -340,7 +360,7 @@
               ]
             },
             {
-               "category": "Smiles", "id": "smiles", "icon": "✨", "mood": "cat-smiles",
+               "category": "Open when you need a tiny spark of joy.", "id": "smiles", "icon": "✨", "mood": "cat-smiles",
                "cards": [
                  { "card_title": "A Tiny Spark of Joy", "variations": [
                     "You are the kind of person who makes sunshine linger a bit longer. Here’s a playful nudge to lift your spirit and make you grin. The world gets kinder when your smile graces it. This is a little note to make your face bloom into that smile I adore. I am always thinking of you, Bangaaru, and how deeply you matter to me."
@@ -348,7 +368,7 @@
                ]
             },
             {
-               "category": "Longing", "id": "longing", "icon": "🌙", "mood": "cat-longing",
+               "category": "Open when distance feels unfair and you wish I were beside you.", "id": "longing", "icon": "🌙", "mood": "cat-longing",
                "cards": [
                  { "card_title": "When the Distance Feels Too Big", "variations": [
                     "Every message is a gentle bridge bringing us closer, Subbamma. I tuck memories into pockets so they will travel with you. I keep you close in small rituals and quiet remembrances. Imagine my voice whispering your name, Bangaaru, as if I were there. I am always thinking of you, Bangaaru, and how deeply you matter to me."
@@ -356,7 +376,7 @@
                ]
             },
             {
-               "category": "Proud of You", "id": "proud", "icon": "🌿", "mood": "cat-warmth",
+               "category": "Open when you need a reminder of your own strength.", "id": "proud", "icon": "🌿", "mood": "cat-warmth",
                "cards": [
                  { "card_title": "Look How Far You've Come", "variations": [
                     "I am endlessly proud of your courage, even in tiny acts. I believe in your gifts and the soft strength you carry, Sannidhi. I notice the small brave choices you make each day. Your quiet persistence is a kind of brilliance that inspires me. Please let these words remind you of how capable you truly are. I am always thinking of you, Subbamma, and how deeply you matter to me."
@@ -364,7 +384,7 @@
                ]
             },
             {
-               "category": "Tough Days", "id": "tough", "icon": "🌧", "mood": "cat-warmth",
+               "category": "Open when you’re carrying too much alone.", "id": "tough", "icon": "🌧", "mood": "cat-warmth",
                "cards": [
                  { "card_title": "For the Hard Moments", "variations": [
                     "I am here for the parts you cannot share with anyone else. You deserve compassion, especially from the person who loves you most. Breathe with me — slow in, slow out — and feel the weight ease. Allow yourself the grace of small mercies in hard hours. I am always thinking of you, Sannidhi, and how deeply you matter to me."
@@ -372,7 +392,7 @@
                ]
             },
             {
-               "category": "Us", "id": "us", "icon": "💞", "mood": "cat-love",
+               "category": "Open when you want to remember why we fit so beautifully.", "id": "us", "icon": "💞", "mood": "cat-love",
                "cards": [
                  { "card_title": "Where Our Story Lives", "variations": [
                     "Every chapter with you feels like coming home, Subbamma. We have more pages to write and I love imagining them with you. I am grateful for the way our lives weave together gently. We have built a language of tenderness that always surprises me. Our story is a quiet constellation of small, luminous things. I am always thinking of you, Subbamma, and how deeply you matter to me."
@@ -380,7 +400,7 @@
                ]
             },
             {
-               "category": "Always Love", "id": "love", "icon": "💌", "mood": "cat-love",
+               "category": "Open when you need to feel loved without a reason.", "id": "love", "icon": "💌", "mood": "cat-love",
                "cards": [
                  { "card_title": "A Hug Waiting for You", "variations": [
                     "I love you simply and completely, in ways both quiet and fierce. There is an ease with you that feels like a safe harbor for my heart. My care for you is steady and unconditional, Bangaaru. Open this card whenever you need a gentle reminder: you are loved. I am always thinking of you, Bangaaru, and how deeply you matter to me."
@@ -425,7 +445,6 @@
 
         /* =========================================
            3. CORE ENGINE
-           (Constellation logic removed)
            ========================================= */
         const Tracker = {
             data: JSON.parse(localStorage.getItem('sannidhi_v11_state') || '{"reads":0, "catCounts":{}, "lastVisit": 0, "savedMessages": 0}'),
@@ -531,12 +550,15 @@
             RAW_DATA.categories.forEach(cat => {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'card-wrapper';
+                
+                // PATCH 2: Handwritten subtitle added
                 wrapper.innerHTML = `
                     <div class="category-card ${cat.mood}" onclick="openCategory('${cat.id}')">
                          <div class="lock-icon">♥</div>
                          <div class="card-content">
                             <span class="card-icon">${cat.icon}</span>
                             <span class="card-label">${cat.category}</span>
+                            <span class="card-subtitle">${cat.category.toLowerCase()}</span>
                          </div>
                     </div>
                 `;
@@ -572,7 +594,7 @@
             createTouchEcho(window.innerWidth/2, window.innerHeight/2);
         }
 
-        /* --- TEXT ENGINE (Signature Patch Implemented) --- */
+        /* --- TEXT ENGINE --- */
         const TextEngine = {
             generate(coreText) {
                 const nicknames = RAW_DATA.personalization.nicknames;
@@ -585,13 +607,11 @@
                 const words = fullText.split(' ');
                 let i = 0;
                 
-                // Reset UI
                 const btn = document.querySelector('.action-pill');
                 btn.innerHTML = "❤️ Save to Heart";
                 btn.style.background = "";
                 btn.style.color = "";
 
-                // Reset Signature
                 const sig = document.getElementById('msg-signature');
                 sig.classList.remove('visible');
 
@@ -605,17 +625,16 @@
                         i++;
                         setTimeout(type, 100); 
                     } else {
-                        // Message done, trigger signature
                         setTimeout(() => {
                             sig.classList.add('visible');
-                        }, 500); // 0.5s delay
+                        }, 500); 
                     }
                 }
                 type();
             }
         };
 
-        /* --- V11 MICRO-INTERACTIONS --- */
+        /* --- MICRO-INTERACTIONS --- */
         function createTouchEcho(x, y) {
             const echo = document.createElement('div');
             echo.className = 'touch-echo';
